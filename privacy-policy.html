@@ -34,32 +34,38 @@
 
 <div class="lang-switch"><a href="#en">English</a></div>
 <h1>Social Grabber 隐私政策</h1>
-<p class="meta">生效日期 / Effective Date: 2026-09-03</p>
+<p class="meta">生效日期 / Effective Date: 2026-09-09</p>
 
 <p>本扩展 Social Grabber（"本扩展"）由 Social Grabber（"我们"）开发。我们非常重视你的隐私。本扩展的设计原则是：<strong>一切处理都在你的浏览器本地完成，我们接触不到任何你的数据。</strong></p>
 
 <h2>1. 我们不收集、也不上传任何数据</h2>
 <ul>
-  <li>我们<strong>不收集、不上传</strong>你的任何个人信息、浏览记录或下载记录。</li>
+  <li>我们<strong>不收集、不上传</strong>你的任何个人信息、浏览记录或下载记录（"已下载"提示标记仅保存在你的浏览器本地，见第 2 节）。</li>
   <li>本扩展<strong>没有任何服务器</strong>：不存在数据可以发往的地方。</li>
   <li>本扩展<strong>没有</strong>广告、统计分析（Analytics）、埋点或第三方追踪代码。</li>
   <li>按 Google 用户数据政策的定义，网页内容本身也算用户数据。本扩展在你浏览页面时，会在<strong>浏览器内存中</strong>读取该页面已加载的素材信息（媒体地址、标题、正文、作者），仅用于识别可下载的内容、并生成你点击后保存的文件。这些数据<strong>只留在你的设备上</strong>：不上传、不写入任何日志、离开页面后即失效。</li>
 </ul>
 
 <h2>2. 保存在你浏览器本地的信息</h2>
-<p>本扩展仅保存你自己的偏好设置：</p>
+<p>本扩展保存两类信息，全部只存在你自己的浏览器里，我们无法接触：</p>
+<p><strong>偏好设置</strong>（<code>chrome.storage.sync</code>，经由<strong>你自己的 Google 账户</strong>在你的浏览器之间同步）：</p>
 <ul>
   <li>下载根目录名（默认 <code>SocialGrabber</code>）以及五个平台各自的子目录名</li>
   <li>界面语言选择（中文 / English / 自动）</li>
   <li>控制台诊断日志开关（默认关闭；只有你手动打开后，才会在浏览器开发者工具里输出排查信息。该选项在设置界面中默认不显示）</li>
 </ul>
-<p>以上都只是配置项本身，不包含任何页面内容、素材地址或下载记录。这些设置通过 Chrome 的 <code>chrome.storage.sync</code> 保存，并经由<strong>你自己的 Google 账户</strong>在你的浏览器之间同步。该数据完全归属你的 Google 账户，我们无法读取。卸载扩展即全部删除。</p>
+<p><strong>"已下载"标记</strong>（<code>chrome.storage.local</code>，只存在本机，<strong>不进入任何账户、不同步、不上传</strong>）：</p>
+<ul>
+  <li>你在本扩展里成功打包过的作品会记一条标记，内容只有：平台名、作品 id、时间、成功保存的文件数（最多保留最近 500 条）。它只用于在卡片和列表里提示"这个作品你已经下载过"，不含媒体地址与文件内容。</li>
+</ul>
+<p>以上数据完全归属你本人：偏好设置经由你自己的 Google 账户同步，我们无法读取；"已下载"标记只存在本机。卸载扩展即全部删除。</p>
 
 <h2>3. 权限用途说明</h2>
 <table>
   <tr><th>权限</th><th>用途</th></tr>
-  <tr><td><code>downloads</code></td><td>将你点击下载的媒体文件与文案 TXT 保存到你设定的下载目录</td></tr>
-  <tr><td><code>storage</code></td><td>仅保存上述偏好设置（目录名、语言、诊断日志开关）</td></tr>
+  <tr><td><code>downloads</code></td><td>将你点击下载的媒体文件与文案 TXT 保存到你设定的下载目录；并在弹窗的下载列表里显示<strong>本扩展自己创建的</strong>下载任务及其状态；允许你清除这些记录（不会删除已保存到磁盘的文件）</td></tr>
+  <tr><td><code>downloads.open</code></td><td>在你点击弹窗下载列表里的已完成条目时，打开该文件所在的文件夹</td></tr>
+  <tr><td><code>storage</code></td><td>保存上述偏好设置（目录名、语言、诊断日志开关）与本地"已下载"标记（见第 2 节）</td></tr>
   <tr><td>站点访问（抖音 / 小红书 / TikTok / Instagram / Pinterest 及其 CDN）</td><td>在你浏览这些网站时，读取<strong>页面自身已加载</strong>的数据以识别当前作品的媒体地址；下载 CDN 上的媒体文件。解析与识别全部在你的浏览器本地完成，识别结果不上传</td></tr>
 </table>
 
@@ -77,32 +83,38 @@
 
 <div class="lang-switch" id="en"><a href="#">Back to top</a></div>
 <h1>Social Grabber Privacy Policy</h1>
-<p class="meta">Effective Date: 2026-09-03</p>
+<p class="meta">Effective Date: 2026-09-09</p>
 
 <p>This policy applies to the browser extension Social Grabber ("the extension") developed by Social Grabber ("we"). The extension is built on one principle: <strong>everything happens locally in your browser — we have no access to any of your data.</strong></p>
 
 <h2>1. We do not collect or transmit any data</h2>
 <ul>
-  <li>We do <strong>not</strong> collect or transmit any personal information, browsing history or download history.</li>
+  <li>We do <strong>not</strong> collect or transmit any personal information, browsing history or download history (the "downloaded" badge marks stay in your browser locally only — see Section 2).</li>
   <li>The extension has <strong>no server</strong>: there is nowhere for data to go.</li>
   <li>The extension contains <strong>no</strong> ads, analytics, tracking or third-party scripts.</li>
   <li>Under Google's user-data definition, website content itself counts as user data. While you browse, the extension reads the media information <strong>already loaded by that page in your browser's memory</strong> (media URLs, title, text, author) solely to identify what can be downloaded and to produce the files you choose to save. This data <strong>stays on your device</strong>: it is never uploaded, never written to any log, and is discarded when you leave the page.</li>
 </ul>
 
 <h2>2. Information stored locally in your browser</h2>
-<p>The extension stores only your own preferences:</p>
+<p>The extension keeps two kinds of data, both inside your own browser and beyond our reach:</p>
+<p><strong>Preferences</strong> (<code>chrome.storage.sync</code>, synced across your browsers through <strong>your own Google account</strong>):</p>
 <ul>
   <li>Download root folder name (default <code>SocialGrabber</code>) and the subfolder name of each of the five platforms</li>
   <li>Interface language (中文 / English / Auto)</li>
   <li>Console diagnostic-logging switch (off by default; it only prints troubleshooting output in your browser's DevTools if you deliberately turn it on, and this option is not shown in the settings UI by default)</li>
 </ul>
-<p>These are configuration values only — they contain no page content, no media URLs and no download history. They are saved via Chrome's <code>chrome.storage.sync</code> and synced through <strong>your own Google account</strong>. The data belongs entirely to your account; we cannot read it. Uninstalling the extension removes all of it.</p>
+<p><strong>"Downloaded" marks</strong> (<code>chrome.storage.local</code>, on this device only — <strong>never synced to any account, never uploaded</strong>):</p>
+<ul>
+  <li>Each post you successfully pack through the extension records one mark containing only: platform name, post id, time, and the number of files saved (the 500 most recent are kept). It exists solely to show the "already downloaded" badge on the card and list; it contains no media URLs and no file content.</li>
+</ul>
+<p>All of this belongs to you: preferences are synced through your own Google account, which we cannot read; "downloaded" marks never leave this device. Uninstalling the extension removes all of it.</p>
 
 <h2>3. Permissions</h2>
 <table>
   <tr><th>Permission</th><th>Purpose</th></tr>
-  <tr><td><code>downloads</code></td><td>Save the media files and caption .txt you choose to download into your configured folders</td></tr>
-  <tr><td><code>storage</code></td><td>Store only the preferences listed above (folder names, language, diagnostic-logging switch)</td></tr>
+  <tr><td><code>downloads</code></td><td>Save the media files and caption .txt you choose to download into your configured folders; list <strong>the extension's own</strong> recent download tasks and their status in the popup; let you erase those records (files already saved on disk are not deleted)</td></tr>
+  <tr><td><code>downloads.open</code></td><td>Open the containing folder when you click a completed entry in the popup's download list</td></tr>
+  <tr><td><code>storage</code></td><td>Store the preferences listed above (folder names, language, diagnostic-logging switch) and the local "downloaded" marks (see Section 2)</td></tr>
   <tr><td>Site access (Douyin / Xiaohongshu / TikTok / Instagram / Pinterest and their CDNs)</td><td>Read data <strong>already loaded by the page itself</strong> on these sites to identify media URLs of the post you are viewing; download media files from their CDNs. All parsing and identification happen locally in your browser; the results are never uploaded</td></tr>
 </table>
 
