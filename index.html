@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xiaohongshu (RedNote) &amp; Douyin Video Downloader – Social Grabber</title>
+<meta name="description" content="One-click downloads of videos, images and captions from Xiaohongshu (RedNote), Douyin, TikTok, Instagram and Pinterest. Free extension — no account, runs 100% locally.">
+<link rel="canonical" href="https://socialgrabberapp.github.io/SocialGrabber/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Social Grabber">
+<meta property="og:title" content="Social Grabber – Download videos, images and captions from five social platforms">
+<meta property="og:description" content="Free browser extension for Xiaohongshu (RedNote), Douyin, TikTok, Instagram and Pinterest. One click saves the media and the caption .txt to your Downloads folder.">
+<meta property="og:url" content="https://socialgrabberapp.github.io/SocialGrabber/">
+<meta property="og:image" content="https://socialgrabberapp.github.io/SocialGrabber/assets/screenshot-tiktok-card.png">
+<link rel="icon" type="image/png" sizes="128x128" href="assets/icon-128.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Social Grabber",
+  "applicationCategory": "BrowserApplication",
+  "operatingSystem": "Chrome",
+  "description": "Browser extension that saves videos, images and captions from the Xiaohongshu (RedNote), Douyin, TikTok, Instagram and Pinterest pages you are viewing. Everything runs locally and nothing is uploaded.",
+  "url": "https://socialgrabberapp.github.io/SocialGrabber/",
+  "downloadUrl": "https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9; --card: #ffffff; --text: #24292f; --muted: #656d76;
+    --line: #e3e6ea; --accent: #d6335f; --accent-dark: #b82a50;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171c; --card: #1c2027; --text: #d7dde3; --muted: #9aa4ad;
+            --line: #31363f; --accent: #f0567f; --accent-dark: #d6335f; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.7 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif; }
+  a { color: var(--accent); }
+  img { max-width: 100%; height: auto; display: block; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  header { border-bottom: 1px solid var(--line); background: var(--card); }
+  .nav { display: flex; align-items: center; gap: 20px; padding: 13px 0; }
+  .brand { font-weight: 700; font-size: 17px; color: var(--text); text-decoration: none; }
+  .navlinks { margin-left: auto; display: flex; gap: 18px; flex-wrap: wrap; }
+  .navlinks a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  .navlinks a:hover { color: var(--accent); }
+  section { padding: 44px 0; }
+  h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.28; margin: 0 0 14px; }
+  h2 { font-size: 24px; margin: 0 0 10px; }
+  h3 { font-size: 16px; margin: 0 0 6px; }
+  .lead { color: var(--muted); font-size: 17px; margin: 0 0 22px; }
+  .hero { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 36px;
+          align-items: center; padding-top: 52px; }
+  .hero .sub { font-size: 17px; color: var(--muted); margin: 0; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 22px 0 12px; }
+  .btn { display: inline-block; border-radius: 9px; padding: 13px 22px;
+         font-weight: 600; font-size: 15px; text-decoration: none; line-height: 1.2; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-ghost { border: 1px solid var(--line); background: var(--card); color: var(--text); }
+  .factrow { color: var(--muted); font-size: 14px; margin: 0; }
+  .shot img { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .card p { margin: 0; font-size: 14.5px; color: var(--muted); }
+  ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px;
+             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  ol.steps li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  ol.steps .n { display: inline-flex; width: 26px; height: 26px; border-radius: 50%;
+                background: var(--accent); color: #fff; align-items: center; justify-content: center;
+                font-weight: 700; font-size: 14px; margin-bottom: 10px; }
+  ol.steps p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  figure { margin: 0; }
+  figcaption { color: var(--muted); font-size: 13.5px; margin-top: 8px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 15.5px; }
+  details p { margin: 10px 0 2px; color: var(--muted); font-size: 14.5px; }
+  footer { border-top: 1px solid var(--line); background: var(--card); padding: 28px 0 36px; }
+  footer .links { display: flex; gap: 18px; flex-wrap: wrap; margin: 0; }
+  footer .links a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  footer .links a:hover { color: var(--accent); }
+  footer .tiny { color: var(--muted); font-size: 12.5px; line-height: 1.6; margin: 14px 0 0; }
+  @media (max-width: 820px) { .hero { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body id="top">
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">Social Grabber</a>
+    <nav class="navlinks">
+      <a href="#platforms">Platforms</a>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#zh" lang="zh-CN">中文</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div>
+      <h1>Download videos, images and captions from Xiaohongshu, Douyin, TikTok, Instagram and Pinterest</h1>
+      <p class="sub">Social Grabber is a free browser extension. A small card appears on the page you are viewing — click once and every detected media file, plus a caption .txt, is saved into neatly organized folders. No account, no separate downloader website, nothing uploaded: everything happens locally in your browser.</p>
+      <p class="cta">
+        <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">Add to Chrome — it's free</a>
+        <!-- Edge Add-ons button: add below once the Edge listing is live
+        <a class="btn btn-ghost" href="EDGE_LISTING_URL">Get it for Edge</a>
+        -->
+      </p>
+      <p class="factrow">Free · No account · No ads or analytics · Runs 100% locally</p>
+    </div>
+    <figure class="shot">
+      <img src="assets/screenshot-tiktok-card.png" width="1280" height="800" alt="Social Grabber card on a TikTok video page with the Pack &amp; download button">
+    </figure>
+  </section>
+
+  <section id="platforms">
+    <div class="wrap">
+      <h2>Works with five platforms</h2>
+      <p class="lead">Open any of these in your browser and the card appears on the page.</p>
+      <div class="grid">
+        <div class="card"><h3>Xiaohongshu / RedNote</h3><p>Full-quality images, videos, covers and captions.</p></div>
+        <div class="card"><h3>Douyin (抖音)</h3><p>Watermark-free videos, image sets, covers and captions.</p></div>
+        <div class="card"><h3>TikTok</h3><p>Videos, images, covers and captions.</p></div>
+        <div class="card"><h3>Instagram</h3><p>Post images and videos.</p></div>
+        <div class="card"><h3>Pinterest</h3><p>Images and videos.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <h2>Everything in one card</h2>
+      <p class="lead">No link copying, no third-party websites, no watermarks added.</p>
+      <div class="grid">
+        <div class="card"><h3>One-click pack</h3><p>Pack &amp; download saves every detected media file on the page, plus a caption .txt.</p></div>
+        <div class="card"><h3>Tick only what you need</h3><p>When a page has several posts detected, select the ones you want and pack only those.</p></div>
+        <div class="card"><h3>Auto-organized folders</h3><p>Files are sorted into SocialGrabber/&lt;platform&gt;/&lt;author&gt;_&lt;title&gt;/ — no manual renaming.</p></div>
+        <div class="card"><h3>Caption saved as .txt</h3><p>Title, text, author, source URL and the media list, saved right next to the media.</p></div>
+        <div class="card"><h3>Custom download folders</h3><p>Change the root folder and each platform's subfolder from the extension popup.</p></div>
+        <div class="card"><h3>100% local</h3><p>No server, no ads, no analytics. Parsing and downloading happen inside your browser.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <p class="lead">From browsing to saved files in three steps.</p>
+      <ol class="steps">
+        <li><span class="n">1</span><h3>Open a supported page</h3><p>Browse Douyin, Xiaohongshu, TikTok, Instagram or Pinterest as usual.</p></li>
+        <li><span class="n">2</span><h3>The card shows what is detected</h3><p>A small card appears on the page (bottom-left by default — drag it anywhere) with the number of detected items.</p></li>
+        <li><span class="n">3</span><h3>Click Pack &amp; download</h3><p>Media files and the caption .txt are saved into your Downloads folder, organized by platform, author and title.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <h2>In action</h2>
+      <div class="grid">
+        <figure>
+          <img src="assets/screenshot-xiaohongshu-card.png" width="1280" height="800" loading="lazy" alt="Social Grabber card on a Xiaohongshu note with the one-click pack button">
+          <figcaption>On a Xiaohongshu note — one click packs 3 files plus the note text.</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/screenshot-tiktok-files.png" width="1280" height="800" loading="lazy" alt="TikTok downloads saved in an organized folder with cover, video and caption txt">
+          <figcaption>TikTok downloads land in an organized folder: media, cover and caption .txt.</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/screenshot-xiaohongshu-files.png" width="1280" height="800" loading="lazy" alt="Xiaohongshu downloads saved with cover, video and caption txt">
+          <figcaption>Xiaohongshu downloads: cover, video and caption .txt.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2>Frequently asked questions</h2>
+      <details>
+        <summary>How do I download a Xiaohongshu (RedNote) video?</summary>
+        <p>Open the note in your browser. The Social Grabber card appears on the page — click “Pack &amp; download” and the video, images and note text are saved to your Downloads folder, inside a folder named after the author and the title. No link copying, no separate downloader website.</p>
+      </details>
+      <details>
+        <summary>Does it work on Douyin and TikTok?</summary>
+        <p>Yes. Douyin, Xiaohongshu, TikTok, Instagram and Pinterest are all supported. The card detects videos, images and covers where the platform provides them, along with the caption text.</p>
+      </details>
+      <details>
+        <summary>Can I save image posts and photo sets, not just videos?</summary>
+        <p>Yes — image sets on Douyin and Xiaohongshu, image posts on TikTok and Instagram, and images on Pinterest are detected alongside videos, and you can tick exactly which ones to save.</p>
+      </details>
+      <details>
+        <summary>Where do my files go?</summary>
+        <p>By default into Downloads/SocialGrabber/&lt;platform&gt;/&lt;author&gt;_&lt;title&gt;/. You can change the root folder and each platform's subfolder in the extension popup.</p>
+      </details>
+      <details>
+        <summary>Is it free? Do I need an account?</summary>
+        <p>It is free, with no account and no sign-up. You browse the platforms as usual (log in to them if you normally would) — Social Grabber never asks for platform credentials.</p>
+      </details>
+      <details>
+        <summary>Does Social Grabber collect my data?</summary>
+        <p>No. There is no server, no ads and no analytics; everything is processed inside your browser and nothing is uploaded. See the <a href="privacy-policy.html">privacy policy</a> for the details.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="zh" lang="zh-CN">
+    <div class="wrap">
+      <h2>中文说明</h2>
+      <p class="lead">Social Grabber 是一个浏览器扩展：浏览抖音、小红书、TikTok、Instagram、Pinterest 时，页面左下角会出现一个抓取卡片（可拖动），点一下就把当前作品的视频、图片和文案保存到你的下载目录，自动按「平台 / 作者_标题」归档。</p>
+      <div class="grid">
+        <div class="card"><h3>一键打包</h3><p>视频、图片、封面与文案 TXT 一次保存，自动归档到对应文件夹。</p></div>
+        <div class="card"><h3>勾选保存</h3><p>一页捕获到多条作品时，只打包你勾选的那些。</p></div>
+        <div class="card"><h3>文案 TXT</h3><p>标题、正文、作者、源地址与媒体清单一并带走。</p></div>
+        <div class="card"><h3>目录自定义</h3><p>根目录与每个平台的子目录都能改（默认「下载/SocialGrabber/」）。</p></div>
+        <div class="card"><h3>双语界面</h3><p>中文 / English 自动跟随网页语言，也可手动切换。</p></div>
+        <div class="card"><h3>纯本地运行</h3><p>没有服务器、没有广告、没有统计，解析与下载都在浏览器里完成。</p></div>
+      </div>
+      <details>
+        <summary>小红书视频怎么下载？</summary>
+        <p>打开笔记页面，点卡片上的「一键打包下载」，视频、图片与笔记文案会保存到「下载/SocialGrabber/小红书/作者_标题/」。不用复制链接、不用打开任何第三方网站。</p>
+      </details>
+      <details>
+        <summary>抖音视频下载需要登录吗？</summary>
+        <p>扩展本身不需要你登录任何账号，也不会索取平台密码；如果你平时浏览该内容本来就要登录，照常使用即可——扩展只识别页面已经加载出来的内容。</p>
+      </details>
+      <details>
+        <summary>数据会被上传吗？</summary>
+        <p>不会。没有服务器、没有广告与统计分析，所有解析和下载都在你的浏览器本地完成；你点击保存的文件直接存进本机下载目录。详见<a href="privacy-policy.html">隐私政策</a>。</p>
+      </details>
+      <p class="cta">
+        <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">添加到 Chrome</a>
+      </p>
+      <p class="factrow">免费 · 无需注册 · 无广告与统计 · 完全本地运行</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="https://github.com/socialgrabberapp/SocialGrabber/issues">Support</a>
+      <a href="mailto:socialgrabber.app@gmail.com">socialgrabber.app@gmail.com</a>
+    </p>
+    <p class="tiny">Social Grabber is not affiliated with Douyin, Xiaohongshu, TikTok, Instagram or Pinterest; all product names and trademarks belong to their respective owners. Download only content you are entitled to save — copyright remains with the original author or platform, and you are responsible for complying with their terms of service and your local laws.</p>
+    <p class="tiny">© 2026 Social Grabber</p>
+  </div>
+</footer>
+
+</body>
+</html>
