@@ -77,6 +77,7 @@ Account-level scraping is exactly what platform anti-abuse systems target, so th
 ## Guides
 
 - [Xiaohongshu video downloader — Chrome extension guide (EN)](guides/xiaohongshu-video-downloader-chrome-extension.html)
+- [TikTok downloader — Chrome extension guide, including why link-based downloaders 403 (EN)](guides/tiktok-video-downloader-chrome-extension.html)
 - [抖音视频下载：Chrome 扩展怎么保存无水印作品（中文）](guides/douyin-video-downloader-chrome-extension.html)
 
 ## Privacy
