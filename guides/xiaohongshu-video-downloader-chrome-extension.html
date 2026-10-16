@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xiaohongshu Video Downloader — Chrome Extension Guide</title>
+<meta name="description" content="How to save Xiaohongshu (RedNote) videos, image notes and caption text from the browser: what paste-a-link sites can and cannot do, and how to pack a whole note with a Chrome extension.">
+<link rel="canonical" href="https://socialgrabberapp.github.io/SocialGrabber/guides/xiaohongshu-video-downloader-chrome-extension.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Social Grabber">
+<meta property="og:title" content="Xiaohongshu Video Downloader — Chrome Extension Guide">
+<meta property="og:description" content="Save Xiaohongshu (RedNote) videos, image sets and the note text straight from the page — no link copying, no third-party site, nothing uploaded.">
+<meta property="og:url" content="https://socialgrabberapp.github.io/SocialGrabber/guides/xiaohongshu-video-downloader-chrome-extension.html">
+<meta property="og:image" content="https://socialgrabberapp.github.io/SocialGrabber/assets/hero-1280x800-en.png">
+<link rel="icon" type="image/png" sizes="128x128" href="../assets/icon-128.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to download Xiaohongshu (RedNote) videos and image notes with a Chrome extension",
+  "description": "A practical guide to saving Xiaohongshu notes — video, images, cover and caption text — from the browser.",
+  "author": { "@type": "Person", "name": "Social Grabber (the extension's developer)" },
+  "publisher": { "@type": "Organization", "name": "Social Grabber", "url": "https://socialgrabberapp.github.io/SocialGrabber/" },
+  "url": "https://socialgrabberapp.github.io/SocialGrabber/guides/xiaohongshu-video-downloader-chrome-extension.html",
+  "about": { "@type": "SoftwareApplication", "name": "Social Grabber", "applicationCategory": "BrowserApplication",
+             "operatingSystem": "Chrome", "url": "https://socialgrabberapp.github.io/SocialGrabber/",
+             "downloadUrl": "https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho",
+             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Do I need to log in to Xiaohongshu to download a note?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The extension never asks for platform credentials and has no account of its own. But if Xiaohongshu itself requires you to be logged in to view a note, you need to be logged in in that browser tab — the extension can only save media the page has already loaded for you." } },
+    { "@type": "Question", "name": "Does it download the video without a watermark?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It saves the source address the page itself loaded. When a note exposes a clean video URL, that is what gets downloaded; when the only variant the page offers carries the platform watermark, that is what you get. The extension never re-encodes a file and never adds a watermark of its own." } },
+    { "@type": "Question", "name": "Can I download every note on someone's profile?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Only the notes your own browsing has already loaded. The card lists the notes currently on the profile page, you tick the ones you want, and packing opens those already-loaded cards one at a time. It does not paginate, crawl the account or fetch notes you have not scrolled to." } },
+    { "@type": "Question", "name": "Where do the files go?",
+      "acceptedAnswer": { "@type": "Answer", "text": "By default into Downloads/SocialGrabber/Xiaohongshu/<author>/<publish-date>_<title>_<note-id>/, with a <title>_caption.txt next to the media. The note id is part of the folder name so two notes with the same title cannot overwrite each other. The root folder and the per-platform subfolder can both be changed in the extension popup." } },
+    { "@type": "Question", "name": "Is the extension free? Does it upload anything?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It is free, with no sign-up. There is no server behind it: detection, parsing and downloading all happen inside your browser, and no page content is uploaded. The only outbound requests are the plain GETs for the exact files you chose to save." } },
+    { "@type": "Question", "name": "Can I use this on Douyin or TikTok too?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — the same extension covers Douyin, Xiaohongshu, TikTok, Instagram and Pinterest, with a bilingual interface that follows the page language." } }
+  ]
+}
+</script>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9; --card: #ffffff; --text: #24292f; --muted: #656d76;
+    --line: #e3e6ea; --accent: #d6335f; --accent-dark: #b82a50;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171c; --card: #1c2027; --text: #d7dde3; --muted: #9aa4ad;
+            --line: #31363f; --accent: #f0567f; --accent-dark: #d6335f; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.7 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif; }
+  a { color: var(--accent); }
+  img { max-width: 100%; height: auto; display: block; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  header { border-bottom: 1px solid var(--line); background: var(--card); }
+  .nav { display: flex; align-items: center; gap: 20px; padding: 13px 0; }
+  .brand { font-weight: 700; font-size: 17px; color: var(--text); text-decoration: none; }
+  .navlinks { margin-left: auto; display: flex; gap: 18px; flex-wrap: wrap; }
+  .navlinks a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  .navlinks a:hover { color: var(--accent); }
+  section { padding: 36px 0; }
+  h1 { font-size: clamp(25px, 4vw, 34px); line-height: 1.3; margin: 0 0 14px; }
+  h2 { font-size: 22px; margin: 34px 0 10px; }
+  h3 { font-size: 16px; margin: 0 0 6px; }
+  p { margin: 0 0 14px; }
+  .lead { color: var(--muted); font-size: 17px; }
+  .tldr { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+          border-radius: 10px; padding: 16px 20px; margin: 0 0 8px; }
+  .tldr p { margin: 0; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 22px 0 12px; }
+  .btn { display: inline-block; border-radius: 9px; padding: 13px 22px;
+         font-weight: 600; font-size: 15px; text-decoration: none; line-height: 1.2; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-ghost { border: 1px solid var(--line); background: var(--card); color: var(--text); }
+  .factrow { color: var(--muted); font-size: 14px; margin: 0; }
+  ol.steps { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 14px; }
+  ol.steps li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px;
+                display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; }
+  ol.steps .n { display: inline-flex; width: 26px; height: 26px; border-radius: 50%;
+                background: var(--accent); color: #fff; align-items: center; justify-content: center;
+                font-weight: 700; font-size: 14px; }
+  ol.steps h3 { margin: 2px 0 4px; }
+  ol.steps p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  figure { margin: 22px 0; }
+  figure img { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  figcaption { color: var(--muted); font-size: 13.5px; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; background: var(--card);
+          border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 14.5px; }
+  caption { text-align: left; color: var(--muted); font-size: 13.5px; padding-bottom: 8px; }
+  th, td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  thead th { background: var(--bg); font-size: 14px; }
+  tbody tr:last-child td, tbody tr:last-child th { border-bottom: 0; }
+  td.yes { color: var(--accent-dark); font-weight: 600; }
+  code { background: var(--card); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px;
+         font-size: 13.5px; font-family: ui-monospace, Consolas, monospace; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 15.5px; }
+  details p { margin: 10px 0 2px; color: var(--muted); font-size: 14.5px; }
+  .note { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+  footer { border-top: 1px solid var(--line); background: var(--card); padding: 28px 0 36px; }
+  footer .links { display: flex; gap: 18px; flex-wrap: wrap; margin: 0; }
+  footer .links a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  footer .links a:hover { color: var(--accent); }
+  footer .tiny { color: var(--muted); font-size: 12.5px; line-height: 1.6; margin: 14px 0 0; }
+</style>
+</head>
+<body id="top">
+
+<header>
+  <div class="wrap" style="max-width:1040px">
+    <div class="nav">
+      <a class="brand" href="../">Social Grabber</a>
+      <nav class="navlinks">
+        <a href="../">Overview</a>
+        <a href="../privacy-policy.html">Privacy</a>
+        <a href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">Chrome Web Store</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap">
+    <h1>How to download Xiaohongshu (RedNote) videos and image notes with a Chrome extension</h1>
+
+    <div class="tldr">
+      <p><strong>Short answer:</strong> a paste-a-link converter can usually hand you one video file, and that is about it — image sets, the cover at full size and the note's text are all lost, and you have just handed your note URL to a stranger's server. A browser extension works on the page you are already looking at, so one click saves the video <em>and</em> the images <em>and</em> a caption .txt into a folder named after the author and the title. Below: what each option really gives you, and the exact steps for the extension route.</p>
+    </div>
+    <p class="cta">
+      <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">Add to Chrome — it's free</a>
+      <a class="btn btn-ghost" href="../">What the extension does</a>
+    </p>
+    <p class="factrow">Free · No account · No server of its own · Everything runs in your browser</p>
+
+    <h2>The three ways people save a RedNote note</h2>
+    <p><strong>1. Paste-a-link download websites.</strong> You copy the note's share link, paste it into a form, wait for it to resolve, download one file. It works for a single video, and it breaks on everything else: multi-image notes come back as one image or nothing, the caption text is not part of the offer, the file lands in your Downloads folder with a random name, and the request — including the link you pasted — goes to whoever runs that site, which is also where the ads live.</p>
+    <p><strong>2. Screen recording or the phone's own save button.</strong> Fine for one clip you want to keep. You get whatever resolution the app shows, a watermark on some content types, and no text file at all. On desktop Xiaohongshu, the browser's own save options are limited to what the site exposes.</p>
+    <p><strong>3. A browser extension that reads the page you are on.</strong> Because it runs where the note is already rendered, it sees everything the site already loaded for you: the video source, every image in the set, the cover, the title and the body text. No link copying, no third-party server in the loop, and the whole note lands in one folder.</p>
+
+    <table>
+      <caption>What you actually end up with, per method</caption>
+      <thead>
+        <tr><th scope="col">&nbsp;</th><th scope="col">Paste-a-link site</th><th scope="col">Screen record</th><th scope="col">Chrome extension</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Video of the note</th><td>Usually</td><td>Yes, re-recorded</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">All images in an image-set note</th><td>Rarely</td><td>Manual, one by one</td><td class="yes">Yes, in one click</td></tr>
+        <tr><th scope="row">Caption / note text as a file</th><td>No</td><td>No</td><td class="yes">Yes — caption .txt</td></tr>
+        <tr><th scope="row">Files organized by author and title</th><td>No</td><td>No</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">Your note URL stays on your machine</th><td>No</td><td>Yes</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">Several already-loaded notes at once</th><td>No</td><td>No</td><td class="yes">Yes — tick and pack</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Step by step: pack one note</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><div><h3>Install from the Chrome Web Store</h3><p>Search for <em>Social Grabber</em> or use the button above. Nothing to register, no key, no sign-in step.</p></div></li>
+      <li><span class="n">2</span><div><h3>Open the note in your browser</h3><p>Browse Xiaohongshu normally — <code>xiaohongshu.com/explore/&lt;note-id&gt;</code> or a note you clicked into from the feed. If the note itself needs you logged in to view, be logged in as usual; the extension never asks for platform credentials.</p></div></li>
+      <li><span class="n">3</span><div><h3>The card appears on the page</h3><p>Bottom-left by default, and you can drag it anywhere — the position is remembered. It shows how many items it detected on this note.</p></div></li>
+      <li><span class="n">4</span><div><h3>Click “Pack &amp; download”</h3><p>Or press <code>Ctrl+Shift+S</code>. Every detected video, image and the cover are saved, together with a caption .txt. A progress bar shows how far along the pack is.</p></div></li>
+    </ol>
+
+    <figure>
+      <img src="../assets/hero-1280x800-en.png" width="1280" height="800" loading="lazy"
+           alt="The Social Grabber card on a post page showing detected items and the pack button, next to the popup settings">
+      <figcaption>The card as it appears on a post page — same layout on a Xiaohongshu note. Illustration, not a screenshot.</figcaption>
+    </figure>
+
+    <h2>What you get on disk</h2>
+    <p>By default the files go to:</p>
+    <p><code>Downloads/SocialGrabber/Xiaohongshu/&lt;author&gt;/&lt;publish-date&gt;_&lt;title&gt;_&lt;note-id&gt;/</code></p>
+    <p>The note id is part of the folder name on purpose: two notes from the same author that happen to share a title would otherwise land in one folder and overwrite each other. If a publish date can't be read, the folder simply starts with the title.</p>
+    <p>Inside that folder: the media files themselves, and a <code>&lt;title&gt;_caption.txt</code> holding the title, the full body text, the author, the source URL and a list of the media saved with it — so the text never gets separated from the footage it belongs to. That .txt also ends with a short, ready-to-copy prompt you can send to any AI chat alongside the video if you want its structure broken down; the extension itself contains no AI and calls no model.</p>
+    <p>Both the root folder and the Xiaohongshu subfolder name are editable in the extension popup, so you can point packs at an existing project directory instead.</p>
+
+    <figure>
+      <img src="../assets/shot4-1280x800-en.png" width="1280" height="800" loading="lazy"
+           alt="A folder tree under Downloads/SocialGrabber beside the extension's Download Center list">
+      <figcaption>Illustration: one folder per note under the platform folder, and the Download Center in the popup lists what you saved.</figcaption>
+    </figure>
+
+    <h2>Several notes at once — and the honest limit</h2>
+    <p>On an author's profile page the card can list the notes <strong>your own browsing has already loaded</strong>; you tick the ones you want and pack only those. Xiaohongshu's profile feed only delivers thumbnails, so when you pack a ticked list the extension opens and closes those already-loaded cards for you, one after another — the same clicks you would do by hand, with pause and cancel available at any point. What it deliberately does <em>not</em> do: paginate, crawl the account, or fetch notes you never scrolled to. If you want more of an author's notes, scroll the page yourself first.</p>
+
+    <figure>
+      <img src="../assets/shot2-1280x800-en.png" width="1280" height="800" loading="lazy"
+           alt="An author profile list inside the card, with several notes ticked and a pack-ticked button at the bottom">
+      <figcaption>Illustration: the tick list on an author profile — the rows are the notes this page has already loaded.</figcaption>
+    </figure>
+
+    <h2>Frequently asked questions</h2>
+    <details>
+      <summary>Do I need to log in to Xiaohongshu to download a note?</summary>
+      <p>The extension never asks for platform credentials and has no account of its own. But if Xiaohongshu itself requires you to be logged in to view a note, you need to be logged in in that browser tab — the extension can only save media the page has already loaded for you.</p>
+    </details>
+    <details>
+      <summary>Does it download the video without a watermark?</summary>
+      <p>It saves the source address the page itself loaded. When a note exposes a clean video URL, that is what gets downloaded; when the only variant the page offers carries the platform watermark, that is what you get. The extension never re-encodes a file and never adds a watermark of its own.</p>
+    </details>
+    <details>
+      <summary>Can I download every note on someone's profile?</summary>
+      <p>Only the notes your own browsing has already loaded. The card lists the notes currently on the profile page, you tick the ones you want, and packing opens those already-loaded cards one at a time. It does not paginate, crawl the account or fetch notes you have not scrolled to.</p>
+    </details>
+    <details>
+      <summary>Where do the files go?</summary>
+      <p>By default into <code>Downloads/SocialGrabber/Xiaohongshu/&lt;author&gt;/&lt;publish-date&gt;_&lt;title&gt;_&lt;note-id&gt;/</code>, with a <code>&lt;title&gt;_caption.txt</code> next to the media. The note id is part of the folder name so two notes with the same title cannot overwrite each other. The root folder and the per-platform subfolder can both be changed in the extension popup.</p>
+    </details>
+    <details>
+      <summary>Is the extension free? Does it upload anything?</summary>
+      <p>It is free, with no sign-up. There is no server behind it: detection, parsing and downloading all happen inside your browser, and no page content is uploaded. The only outbound requests are the plain GETs for the exact files you chose to save.</p>
+    </details>
+    <details>
+      <summary>Can I use this on Douyin or TikTok too?</summary>
+      <p>Yes — the same extension covers Douyin, Xiaohongshu, TikTok, Instagram and Pinterest, with a bilingual interface that follows the page language.</p>
+    </details>
+
+    <p class="note"><strong>Who wrote this:</strong> I built Social Grabber, the extension used in the examples above, and it is the product this page links to. I tried to keep the comparison honest about what the other options are genuinely good at. Copyright of anything you save stays with its original author or the platform — save only what you are entitled to keep.</p>
+
+    <p class="cta">
+      <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">Add to Chrome</a>
+      <a class="btn btn-ghost" href="../privacy-policy.html">Privacy policy</a>
+    </p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap" style="max-width:1040px">
+    <p class="links">
+      <a href="../">Social Grabber overview</a>
+      <a href="../privacy-policy.html">Privacy Policy</a>
+      <a href="https://github.com/socialgrabberapp/SocialGrabber/issues">Support</a>
+      <a href="mailto:socialgrabber.app@gmail.com">socialgrabber.app@gmail.com</a>
+    </p>
+    <p class="tiny">Social Grabber is not affiliated with Douyin, Xiaohongshu, TikTok, Instagram or Pinterest; all product names and trademarks belong to their respective owners. Download only content you are entitled to save — copyright remains with the original author or platform, and you are responsible for complying with their terms of service and your local laws.</p>
+    <p class="tiny">© 2026 Social Grabber</p>
+  </div>
+</footer>
+
+</body>
+</html>
