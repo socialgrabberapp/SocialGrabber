@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TikTok Downloader — Chrome Extension Guide (video, photo posts, captions)</title>
+<meta name="description" content="How to save TikTok videos, photo posts and their caption text with a Chrome extension: why paste-a-link downloaders hit a 403, what one click actually saves to disk, and where the batch limit is.">
+<link rel="canonical" href="https://socialgrabberapp.github.io/SocialGrabber/guides/tiktok-video-downloader-chrome-extension.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Social Grabber">
+<meta property="og:title" content="TikTok Downloader — Chrome Extension Guide (video, photo posts, captions)">
+<meta property="og:description" content="Save TikTok videos, photo sets and the caption text from the page you are already on — no link pasting, no third-party server, and no 403 from an expired signed address.">
+<meta property="og:url" content="https://socialgrabberapp.github.io/SocialGrabber/guides/tiktok-video-downloader-chrome-extension.html">
+<meta property="og:image" content="https://socialgrabberapp.github.io/SocialGrabber/assets/hero-1280x800-en.png">
+<meta property="og:locale" content="en_US">
+<link rel="icon" type="image/png" sizes="128x128" href="../assets/icon-128.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to download TikTok videos and photo posts with a Chrome extension",
+  "description": "A practical guide to saving TikTok posts — video, photo-set images, cover and caption text — from the page you are already on, including why link-based downloaders hit a 403.",
+  "inLanguage": "en",
+  "author": { "@type": "Person", "name": "Social Grabber (the extension's developer)" },
+  "publisher": { "@type": "Organization", "name": "Social Grabber", "url": "https://socialgrabberapp.github.io/SocialGrabber/" },
+  "url": "https://socialgrabberapp.github.io/SocialGrabber/guides/tiktok-video-downloader-chrome-extension.html",
+  "about": { "@type": "SoftwareApplication", "name": "Social Grabber", "applicationCategory": "BrowserApplication",
+             "operatingSystem": "Chrome / Edge", "url": "https://socialgrabberapp.github.io/SocialGrabber/",
+             "downloadUrl": "https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho",
+             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Why does a TikTok downloader site give me a 403 or an empty file?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The video address TikTok's own interface hands out carries a placeholder token instead of a real one, and the CDN rejects it — the site you pasted the link into gets the same rejection you do, or resolves the address and sends you to an expired one minutes later. The extension does not use that address. It takes the address the player in your tab actually pulled the video from, which by definition is one that works. If the video plays, it can be saved." } },
+    { "@type": "Question", "name": "Does it download TikTok videos without a watermark?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It saves the media the page itself loaded, without re-encoding it and without adding a watermark of its own. The address TikTok's interface marks as a watermarked download is only kept as a last-resort mirror, tried after the one the player used. If the only variant a given post exposes carries TikTok's own mark, that is what lands in the folder — the extension will not invent a cleaner file than the page was served." } },
+    { "@type": "Question", "name": "Can I download every video on a TikTok profile?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Only the posts your own browsing has already loaded. On a profile page the card lists the posts whose data this tab already received, you tick the ones you want and pack them in one go. It never paginates, never crawls the account, and never fetches posts you have not scrolled to. Scroll more if you want more rows, then pack." } },
+    { "@type": "Question", "name": "Where do the files go?",
+      "acceptedAnswer": { "@type": "Answer", "text": "By default into Downloads/SocialGrabber/TikTok/<author>/<publish-date>_<title>_<post-id>/, with a <title>_caption.txt next to the media. The post id is part of the folder name so two posts with the same caption cannot overwrite each other, and a post with no caption at all is named after its id. The root folder and the TikTok subfolder name can both be changed in the extension popup." } },
+    { "@type": "Question", "name": "Do I need to be logged in to TikTok for this to work?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The extension never asks for platform credentials and has no account of its own. But it can only save what the page rendered for you, so where TikTok itself demands a login, or redirects your region to a landing page, log in in that tab the way you normally would. Nothing about the extension changes what TikTok decides to show you." } },
+    { "@type": "Question", "name": "Is it free? Does it upload my data?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Free, no sign-up, no account system. There is no server behind it: detection, parsing and saving all happen inside your browser and no page content is uploaded. The only outbound requests are the plain downloads for the exact files you chose to save. The permissions it asks for are downloads, storage and opening files it downloaded, plus per-domain access limited to the platforms it supports and their media CDNs — no access to every site." } },
+    { "@type": "Question", "name": "Does it work on Douyin, Xiaohongshu, Instagram or Pinterest too?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — the same extension covers Douyin, Xiaohongshu, TikTok, Instagram and Pinterest, with a bilingual interface that follows the page language. It does not record live streams and does not export comments on any of them." } }
+  ]
+}
+</script>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9; --card: #ffffff; --text: #24292f; --muted: #656d76;
+    --line: #e3e6ea; --accent: #d6335f; --accent-dark: #b82a50;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171c; --card: #1c2027; --text: #d7dde3; --muted: #9aa4ad;
+            --line: #31363f; --accent: #f0567f; --accent-dark: #d6335f; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.7 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif; }
+  a { color: var(--accent); }
+  img { max-width: 100%; height: auto; display: block; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  header { border-bottom: 1px solid var(--line); background: var(--card); }
+  .nav { display: flex; align-items: center; gap: 20px; padding: 13px 0; }
+  .brand { font-weight: 700; font-size: 17px; color: var(--text); text-decoration: none; }
+  .navlinks { margin-left: auto; display: flex; gap: 18px; flex-wrap: wrap; }
+  .navlinks a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  .navlinks a:hover { color: var(--accent); }
+  section { padding: 36px 0; }
+  h1 { font-size: clamp(25px, 4vw, 34px); line-height: 1.3; margin: 0 0 14px; }
+  h2 { font-size: 22px; margin: 34px 0 10px; }
+  h3 { font-size: 16px; margin: 0 0 6px; }
+  p { margin: 0 0 14px; }
+  .lead { color: var(--muted); font-size: 17px; }
+  .tldr { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+          border-radius: 10px; padding: 16px 20px; margin: 0 0 8px; }
+  .tldr p { margin: 0; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 22px 0 12px; }
+  .btn { display: inline-block; border-radius: 9px; padding: 13px 22px;
+         font-weight: 600; font-size: 15px; text-decoration: none; line-height: 1.2; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-ghost { border: 1px solid var(--line); background: var(--card); color: var(--text); }
+  .factrow { color: var(--muted); font-size: 14px; margin: 0; }
+  ol.steps { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 14px; }
+  ol.steps li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px;
+                display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; }
+  ol.steps .n { display: inline-flex; width: 26px; height: 26px; border-radius: 50%;
+                background: var(--accent); color: #fff; align-items: center; justify-content: center;
+                font-weight: 700; font-size: 14px; }
+  ol.steps h3 { margin: 2px 0 4px; }
+  ol.steps p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  figure { margin: 22px 0; }
+  figure img { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  figcaption { color: var(--muted); font-size: 13.5px; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; background: var(--card);
+          border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 14.5px; }
+  caption { text-align: left; color: var(--muted); font-size: 13.5px; padding-bottom: 8px; }
+  th, td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  thead th { background: var(--bg); font-size: 14px; }
+  tbody tr:last-child td, tbody tr:last-child th { border-bottom: 0; }
+  td.yes { color: var(--accent-dark); font-weight: 600; }
+  code { background: var(--card); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px;
+         font-size: 13.5px; font-family: ui-monospace, Consolas, monospace; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 15.5px; }
+  details p { margin: 10px 0 2px; color: var(--muted); font-size: 14.5px; }
+  .note { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+  footer { border-top: 1px solid var(--line); background: var(--card); padding: 28px 0 36px; }
+  footer .links { display: flex; gap: 18px; flex-wrap: wrap; margin: 0; }
+  footer .links a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  footer .links a:hover { color: var(--accent); }
+  footer .tiny { color: var(--muted); font-size: 12.5px; line-height: 1.6; margin: 14px 0 0; }
+</style>
+</head>
+<body id="top">
+
+<header>
+  <div class="wrap" style="max-width:1040px">
+    <div class="nav">
+      <a class="brand" href="../">Social Grabber</a>
+      <nav class="navlinks">
+        <a href="../">Overview</a>
+        <a href="./xiaohongshu-video-downloader-chrome-extension.html">Xiaohongshu guide</a>
+        <a href="../privacy-policy.html">Privacy</a>
+        <a href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">Chrome Web Store</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap">
+    <h1>How to download TikTok videos and photo posts with a Chrome extension</h1>
+
+    <div class="tldr">
+      <p><strong>Short answer:</strong> a paste-a-link TikTok downloader can usually hand you one video file, and it breaks in two specific places — photo posts (the swipeable image carousels) come back as nothing, and the address it resolves for you is signed and short-lived, which is where the 403 comes from. A browser extension works on the tab you already have open, so one click saves the video <em>or</em> every image in the photo set, the cover, and the caption as a .txt — into one folder named after the author and the post. The 403 disappears as a side effect: the extension takes the address your own player just streamed from.</p>
+    </div>
+    <p class="cta">
+      <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">Add to Chrome — it's free</a>
+      <a class="btn btn-ghost" href="../">What the extension does</a>
+    </p>
+    <p class="factrow">Free · No account · No server of its own · Everything runs in your browser</p>
+
+    <h2>The three ways people save a TikTok post</h2>
+    <p><strong>1. Paste-a-link download websites.</strong> You copy the share link, paste it into a form, wait, download one file. Two problems are structural rather than incidental. A photo post — the kind you swipe through — has no single video to return, so those sites either fail or give you only the first image. And the media address they resolve carries a token that expires within minutes: the file you click ten seconds later is already refused by the CDN. Your link, meanwhile, has gone to whoever runs that site, which is also where the pop-ups live.</p>
+    <p><strong>2. The TikTok app's own save button.</strong> Good when you just want one clip on your phone. You get the version the app decides to write — frequently with TikTok's own mark and an outro frame — and the caption text has to be copied separately. Everything then has to be transferred to the computer again, in a flat Downloads folder.</p>
+    <p><strong>3. A browser extension that reads the page you are on.</strong> Because it runs where the post is already rendered, it sees what TikTok already loaded for you: the video source the player is using, each image in a photo set, the cover, the caption. No link copying, no third-party server in the loop, one folder per post.</p>
+
+    <table>
+      <caption>What you actually end up with, per method</caption>
+      <thead>
+        <tr><th scope="col">&nbsp;</th><th scope="col">Paste-a-link site</th><th scope="col">App save button</th><th scope="col">Chrome extension</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Video of the post</th><td>Usually</td><td>Yes</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">All images in a photo post</th><td>Rarely</td><td>Manual, one by one</td><td class="yes">Yes, in one click</td></tr>
+        <tr><th scope="row">Caption and hashtags as a text file</th><td>No</td><td>No</td><td class="yes">Yes — caption .txt</td></tr>
+        <tr><th scope="row">Files organized by author and title</th><td>No</td><td>No</td><td class="yes">Yes</td></tr>
+        <tr><th scope="row">Not blocked by an expired signed address</th><td>No</td><td>Yes</td><td class="yes">Yes — saves what the player streamed</td></tr>
+        <tr><th scope="row">Several already-loaded posts at once</th><td>No</td><td>No</td><td class="yes">Yes — tick and pack</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Step by step: pack one post</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><div><h3>Install from the Chrome Web Store</h3><p>Search for <em>Social Grabber</em> or use the button above. Nothing to register, no key, no sign-in step.</p></div></li>
+      <li><span class="n">2</span><div><h3>Open the post in your browser</h3><p>Browse TikTok normally. Video posts are at <code>tiktok.com/@handle/video/&lt;post-id&gt;</code>, photo posts at <code>tiktok.com/@handle/photo/&lt;post-id&gt;</code>. You can also stay on the For You feed — see the next step.</p></div></li>
+      <li><span class="n">3</span><div><h3>The card follows what you are watching</h3><p>A card appears on the page, bottom-left by default, and you can drag it anywhere — the position is remembered. On the For You feed the URL doesn't change when you swipe, so the card instead watches which video is actually playing and switches to that post. On a profile grid it deliberately does <em>not</em> chase the video that previews under your mouse; hovering is not the same as choosing a post.</p></div></li>
+      <li><span class="n">4</span><div><h3>Tick what you want, or take everything</h3><p>A photo post lists its images individually, so you can keep three of five. Video posts list the video and the cover.</p></div></li>
+      <li><span class="n">5</span><div><h3>Click “Pack &amp; download” — or press <code>Ctrl+Shift+S</code></h3><p><code>Command+Shift+S</code> on a Mac. The shortcut is registered by the extension itself, nothing to configure in browser settings. You get a progress line, then a count of what saved and what didn't; individual failures can be retried without re-running the whole pack.</p></div></li>
+    </ol>
+
+    <figure>
+      <img src="../assets/hero-1280x800-en.png" width="1280" height="800" loading="lazy"
+           alt="The Social Grabber card on a post page showing the detected items and the pack button beside the popup settings">
+      <figcaption>The card as it appears on a post page — same layout on TikTok. Illustration, not a screenshot.</figcaption>
+    </figure>
+
+    <h2>What you get on disk</h2>
+    <p>By default the files go to:</p>
+    <p><code>Downloads/SocialGrabber/TikTok/&lt;author&gt;/&lt;publish-date&gt;_&lt;title&gt;_&lt;post-id&gt;/</code></p>
+    <p>The author folder uses the display name you see on the page. The post id is part of the work folder name on purpose: two posts from the same account that happen to share a caption would otherwise land in one folder and overwrite each other. A post with no caption at all is named after its id, which also keeps bulk packs from collapsing into a single file. If no publish date can be read, the folder simply starts with the title.</p>
+    <p>Inside that folder, one file per item: a video post gives you <code>&lt;title&gt;.mp4</code> plus <code>&lt;title&gt;_cover.jpeg</code>; a photo post gives you <code>&lt;title&gt;_image1.jpg</code>, <code>&lt;title&gt;_image2.jpg</code> and so on. File names stay readable — no <code>(1)</code> unless two items in the same pack genuinely collide.</p>
+    <p>Alongside them is <code>&lt;title&gt;_caption.txt</code>: the caption exactly as the post carries it (hashtags included), the author, the source URL, then the direct address of every media file with a line above each one saying what it is — cover, image 3, video via the player's own address. Failed links stay in that list too, so you can paste one into the address bar by hand. The .txt ends with a short prompt you can send to any video-capable AI chat together with the file if you want that post's structure broken down; it is plain text sitting in a folder, the extension contains no AI and calls no model.</p>
+    <p>Both the root folder and the TikTok subfolder name are editable in the extension popup, so packs can land in an existing project directory instead.</p>
+
+    <figure>
+      <img src="../assets/shot4-1280x800-en.png" width="1280" height="800" loading="lazy"
+           alt="A folder tree under Downloads/SocialGrabber beside the extension's Download Center list">
+      <figcaption>Illustration: one folder per post under the platform folder, and the Download Center in the popup lists what you saved.</figcaption>
+    </figure>
+
+    <h2>Why TikTok downloaders 403 — and what happens instead</h2>
+    <p>This is the failure worth understanding, because it is not bad luck and no paste-a-link site can fix it. The media address that comes back in TikTok's own interface data does not contain a real token. It contains a placeholder, and the client-side player exchanges that placeholder for a working token before it asks the CDN for the file. A site that just resolves the address and redirects your browser to it is handing you a URL the CDN will always refuse — hence a 403, a zero-byte file, or a download that "works" on the site's own machine and not on yours.</p>
+    <p>The extension inverts that: it doesn't guess a URL, it uses the one your tab already streamed successfully. It looks for it in four places, in order — the address currently loaded in the playing <code>&lt;video&gt;</code> element; the streaming request the player itself made, captured as it happens (the URL only; the video is never fetched twice just to look at it); the browser's own record of resource requests, reading backwards for the most recent one; and finally the token exchange from your own cookies. Only if all four come up empty does it fall back to the interface address, and the other mirrors TikTok provides are kept as a second and third try.</p>
+    <p>Practical consequence: <strong>if it plays in your tab, it can be saved.</strong> And the corollary is just as true — if TikTok won't play the post for you at all (a region block, or a login wall), the extension has nothing to save either. It never pretends to have downloaded something the page refused to show.</p>
+
+    <h2>Several posts at once — and the honest limit</h2>
+    <p>Two page types get a list. On a <strong>profile</strong> (<code>tiktok.com/@handle</code>) the card shows “<em>N</em> posts by this author”; on a <strong>playlist</strong> page (<code>tiktok.com/@handle/playlist/&lt;id&gt;</code>) it shows “<em>N</em> captured in this collection”. The rows are the posts whose full media data this tab has already received while you scrolled — unlike Xiaohongshu, where a profile only ships thumbnails and packing has to open each loaded card, on TikTok the data is already in hand, so ticking and packing saves directly without opening anything.</p>
+    <p>Which posts belong to this profile is decided by the account's @handle, not by its display name — the two routinely disagree, and a post whose handle can't be read is skipped rather than listed. Same rule on playlists: only rows tagged while this playlist page was open. Posts you already saved carry a "Downloaded" badge, so a re-pack doesn't duplicate them.</p>
+    <p>And the line we deliberately do not cross: <strong>the extension never paginates, never crawls an account, and never fetches posts you haven't scrolled to.</strong> Account-level scraping is exactly the behaviour TikTok's risk systems watch, and it puts your own account at risk for a batch of files — that trade isn't worth it, and a tool that promises "download all 800 videos from this profile" is making that bet with your login. Scroll the profile yourself, then tick what loaded. A post detail page shows only that post's card, no list.</p>
+
+    <figure>
+      <img src="../assets/shot2-1280x800-en.png" width="1280" height="800" loading="lazy"
+           alt="An author profile list inside the card with several posts ticked and a pack-selected button at the bottom">
+      <figcaption>Illustration: the tick list on a profile — every row is a post this page has already loaded.</figcaption>
+    </figure>
+
+    <h2>When the card says it can't identify this post</h2>
+    <p>TikTok rewrites its page structure a few times a year, and sometimes the card can see posts it captured but not the one you're looking at. It then says so instead of quietly downloading something else. Three things fix it in practice, in this order: <strong>① tap the player so the video actually plays</strong> (the playing video is the strongest evidence the card has), <strong>② swipe one post away and back</strong>, <strong>③ press F5</strong> to reload the page. If it still won't resolve, the console under <code>[Social Grabber]</code> says which step failed — "found no playing video" and "found the video but not its identity" are different bugs, and telling them apart is what makes the fix short rather than guesswork.</p>
+
+    <h2>Frequently asked questions</h2>
+    <details>
+      <summary>Why does a TikTok downloader site give me a 403 or an empty file?</summary>
+      <p>The video address TikTok's own interface hands out carries a placeholder token instead of a real one, and the CDN rejects it — the site you pasted the link into gets the same rejection you do, or resolves the address and sends you to an expired one minutes later. The extension does not use that address. It takes the address the player in your tab actually pulled the video from, which by definition is one that works. If the video plays, it can be saved.</p>
+    </details>
+    <details>
+      <summary>Does it download TikTok videos without a watermark?</summary>
+      <p>It saves the media the page itself loaded, without re-encoding it and without adding a watermark of its own. The address TikTok's interface marks as a watermarked download is only kept as a last-resort mirror, tried after the one the player used. If the only variant a given post exposes carries TikTok's own mark, that is what lands in the folder — the extension will not invent a cleaner file than the page was served.</p>
+    </details>
+    <details>
+      <summary>Can I download every video on a TikTok profile?</summary>
+      <p>Only the posts your own browsing has already loaded. On a profile page the card lists the posts whose data this tab already received, you tick the ones you want and pack them in one go. It never paginates, never crawls the account, and never fetches posts you have not scrolled to. Scroll more if you want more rows, then pack.</p>
+    </details>
+    <details>
+      <summary>Where do the files go?</summary>
+      <p>By default into <code>Downloads/SocialGrabber/TikTok/&lt;author&gt;/&lt;publish-date&gt;_&lt;title&gt;_&lt;post-id&gt;/</code>, with a <code>&lt;title&gt;_caption.txt</code> next to the media. The post id is part of the folder name so two posts with the same caption cannot overwrite each other, and a post with no caption at all is named after its id. The root folder and the TikTok subfolder name can both be changed in the extension popup.</p>
+    </details>
+    <details>
+      <summary>Do I need to be logged in to TikTok for this to work?</summary>
+      <p>The extension never asks for platform credentials and has no account of its own. But it can only save what the page rendered for you, so where TikTok itself demands a login, or redirects your region to a landing page, log in in that tab the way you normally would. Nothing about the extension changes what TikTok decides to show you.</p>
+    </details>
+    <details>
+      <summary>Is it free? Does it upload my data?</summary>
+      <p>Free, no sign-up, no account system. There is no server behind it: detection, parsing and saving all happen inside your browser and no page content is uploaded. The only outbound requests are the plain downloads for the exact files you chose to save. The permissions it asks for are <code>downloads</code>, <code>storage</code> and opening files it downloaded, plus per-domain access limited to the platforms it supports and their media CDNs — no access to every site.</p>
+    </details>
+    <details>
+      <summary>Does it work on Douyin, Xiaohongshu, Instagram or Pinterest too?</summary>
+      <p>Yes — the same extension covers Douyin, Xiaohongshu, TikTok, Instagram and Pinterest, with a bilingual interface that follows the page language. It does not record live streams and does not export comments on any of them.</p>
+    </details>
+
+    <p class="note"><strong>Who wrote this:</strong> I built Social Grabber, the extension used in the examples above, and it is the product this page links to. I tried to keep the comparison honest about what the other options are genuinely good at. Copyright of anything you save stays with its original author or the platform — save only what you are entitled to keep.</p>
+
+    <p class="cta">
+      <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/apcgdmmomohncjmajfbaoklmdflgboho">Add to Chrome</a>
+      <a class="btn btn-ghost" href="../privacy-policy.html">Privacy policy</a>
+    </p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap" style="max-width:1040px">
+    <p class="links">
+      <a href="../">Social Grabber overview</a>
+      <a href="./xiaohongshu-video-downloader-chrome-extension.html">Xiaohongshu download guide</a>
+      <a href="./douyin-video-downloader-chrome-extension.html">抖音视频下载教程（中文）</a>
+      <a href="../privacy-policy.html">Privacy Policy</a>
+      <a href="https://github.com/socialgrabberapp/SocialGrabber/issues">Support</a>
+      <a href="mailto:socialgrabber.app@gmail.com">socialgrabber.app@gmail.com</a>
+    </p>
+    <p class="tiny">Social Grabber is not affiliated with Douyin, Xiaohongshu, TikTok, Instagram or Pinterest; all product names and trademarks belong to their respective owners. Download only content you are entitled to save — copyright remains with the original author or platform, and you are responsible for complying with their terms of service and your local laws.</p>
+    <p class="tiny">© 2026 Social Grabber</p>
+  </div>
+</footer>
+
+</body>
+</html>
